@@ -5,6 +5,6 @@ It may help to include
 
 ```Matlab
 % add function path
-addpath(genpath('../Functions'));
+addpath(genpath('path/to/Functions'));
 ```
 at the top of your code. This will allow MATLAB to look into the functions folder and any subfolders within it.
