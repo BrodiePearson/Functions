@@ -35,14 +35,6 @@ bincounts_over_time = zeros([length(latbins),length(lonbins),length(oceantime)])
 %-------------------------------------------------------------------------
 %   Bin Data
 %-------------------------------------------------------------------------
-if strcmp(par.makegif,'True')
-    axis tight manual % this ensures that getframe() returns a consistent size
-    figure(1)
-    set(gcf, 'Position', [45, 1000000, 2400, 1100]); 
-    filename = par.gifname;
-end
-
-disp('Binning data...')
 for tt = 1:nt
     for xx = 1:length(lonbins)
         for yy = 1:length(latbins)
@@ -115,32 +107,9 @@ for tt = 1:nt
         end
     end
     
-    if strcmp(par.makegif,'True')
-        [xx,yy] = meshgrid(lonbins,latbins);
-        figure(1)
-        lattmp = lat(:,tt);
-        lontmp = lon(:,tt);
-        subplot(1,2,1)
-        geoscatter(yy(:),xx(:),150,bincounts(:),'.')
-        c = colorbar;
-        ylabel(c,'No. of Drifters')
-        colormap(fire)
-        caxis([0,size(lat,1)])
-        geolimits([latbins(1),latbins(end)],[lonbins(1),lonbins(end)])
-        geobasemap colorterrain
-        subplot(1,2,2)
-        geoscatter(lattmp,lontmp,400,'g.')
-        geolimits([latbins(1),latbins(end)],[lonbins(1),lonbins(end)])
-        geobasemap colorterrain
-        pause(.2)
-        hold off
-        set(findall(gcf,'-property','FontSize'),'FontSize',25)
-
-        frame2gif(filename,gcf,tt,par.delaytime)
-    end
-    prev=round((tt-1)/(nt-1),2);
-    if round(tt/(nt-1),2)~=prev
-        disp(['PROGRESS: ', int2str(round(tt/(nt-1),2)*100), '%'])
+    prev=round((tt-1)/nt,2);
+    if round(tt/nt,2)~=prev
+        body(['PROGRESS: ', int2str(round(tt/nt,2)*100) '%%'])
     end
 end
 
