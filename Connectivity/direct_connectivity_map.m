@@ -1,4 +1,4 @@
-function struc = connectivity_map(lon,lat,oceantime,par)
+function struc = direct_connectivity_map(lon,lat,oceantime,par)
 % get sizes
 [nd,nt] = size(lon);
 
@@ -7,7 +7,7 @@ tag = 1:nd;
 
 % get lat lon bounds for boxes
 maxlat = max(lat(:));
-minlat = min(lat(:));
+minlat = nanmin(lat(:));
 maxlon = max(lon(:));
 minlon = min(lon(:));
 

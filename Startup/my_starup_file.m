@@ -9,6 +9,11 @@ addpath(genpath('../Functions'));
 addpath(genpath('../Private_Functions'));
 
 %-------------------------------------------------------------------------
+% MATLAB Theme
+%-------------------------------------------------------------------------
+schemer_import(darksteel)
+
+%-------------------------------------------------------------------------
 % Plotting Defaults
 %-------------------------------------------------------------------------
 
@@ -21,6 +26,8 @@ set(groot, 'defaultLegendInterpreter','latex');
 set(groot,'defaultLineLineWidth',3)
 
 % colors
-
+set(groot,'defaultFigureColor','w')
 
 % fonts
+set(groot,'defaultAxesFontSize',20)
+set(groot,'defaultFontName','New Century Schoolbook')
