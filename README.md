@@ -3,7 +3,8 @@ Contains useful functions for MATLAB, Python, R etc. Some of these are written b
 
 It may help to include
 
-'''MATLAB
+```Matlab
 % add function path
 addpath(genpath('../Functions'));
-'''
+```
+at the top of your code. This will allow MATLAB to look into the functions folder and any subfolders within it.
