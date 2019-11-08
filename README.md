@@ -7,4 +7,4 @@ It may help to include
 % add function path
 addpath(genpath('path/to/Functions'));
 ```
-at the top of your code. This will allow MATLAB to look into the functions folder and any subfolders within it.
+at the top of your code or add it to your startup file. This will allow MATLAB to look into the functions folder and any subfolders within it.
