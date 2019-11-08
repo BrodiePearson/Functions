@@ -1,0 +1,134 @@
+close all; clear all; clc; 
+tic;
+%% Setup 
+inputdata = 'ROMS_500m_wshelf.mat';
+outputdata = 'ROMS_500m_395_unbinned_1400pts_add40_wshelf.mat';
+inputdatapath = '/Users/jennapalmer/Desktop/GOM/Data/ROMS/ROMS_500m/Raw/';
+outputdatapath = '/Users/jennapalmer/Desktop/GOM/Data/ROMS/ROMS_500m/VSF2/Unbinned/';
+addpath(genpath('/Users/jennapalmer/Desktop/GOM/Code/Functions'));
+
+% If you need to subset data consider making that a tunable paraemter here
+
+% Text message when done running or error: true= send false = don't send
+sendmessage = false;
+senderrormessage = false;
+
+% Send text message that the program has begun running
+if sendmessage == true
+    [h,m,s] = hms(datetime);
+    if m<10
+        send_text_message([outputdata, 'started running at ',num2str(h),':0',num2str(m)])
+    else
+        send_text_message([outputdata, 'started running at ',num2str(h),':',num2str(m)])
+
+    end
+end
+
+%% Calculate SF
+
+try % error catcher
+
+    % Load data for processing
+    load([inputdatapath,inputdata]);
+
+    % Take a smaller subset of data 
+    [ ~,rowindx] = datasample(lon,1000,1,'Replace',false); % # drifters
+
+    % Take top 40 percent of that data randomly, and resample their neighbors
+
+    resamp = round(.4*length(rowindx),2);
+    ind = datasample(rowindx,resamp,'Replace',false);
+
+    % Make sure places nearby are sampled
+    ind = ind + ones(1,resamp);
+    rowindx = [rowindx ind];
+    rowindx =sort(rowindx);
+
+    lon = lon(rowindx,:);               
+    lat = lat(rowindx,:);
+    u = u(rowindx,:,:);
+    v = v(rowindx,:,:);
+
+    [nd,nt] = size(lon);
+
+    %% Structure Function Values%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    % Define size of matrices
+    combos =nchoosek(nd,2);
+
+    longvel= zeros(1,combos,nt);
+    tranvel= zeros(1,combos,nt);
+    rd= zeros(1,combos,nt);
+
+    beg = 1;
+    fin = nd-1;
+    for ii = 1:nd-1  
+      for jj = ii+1:nd
+        [dx,~,~] =  m_idist(lon(ii,:),lat(ii,:),lon(jj,:),lat(ii,:));         % compute the distance between longitudes
+        [dy,~,~] =  m_idist(lon(ii,:),lat(ii,:),lon(ii,:),lat(jj,:));         % compute the distance between latitudes
+        [dr,~,~] =  m_idist(lon(ii,:),lat(ii,:),lon(jj,:),lat(jj,:));         % compute radial distance from one point to the other
+
+        dx = sign(lon(jj,:) - lon(ii,:)).*dx;     % Get the correct sign for dx
+        dy = sign(lat(jj,:) - lat(ii,:)).*dy;     % Get the correct sign for dy
+        du = u(jj,:)-u(ii,:);           % Find the zonal velocity differences
+        dv = v(jj,:)-v(ii,:);           % Find the meridional velocity differences
+
+        r(ii,jj,:) = dr;
+
+       % Longitudinal(sfvl) and Transverse(sfvt) sf values: 
+         sfvl = ( du.*dx + dv.*dy)./dr;             % Projection of dvel onto r 
+         sfvt = (-du.*dy + dv.*dx)./dr;             % Projection of dvel onto r perp
+         sflvel(ii,jj,:) = sfvl.^2;                 % Adds a t vector for the lvel and tvel struc. func. values for drifters i and all others after i for all times
+         sftvel(ii,jj,:) = sfvt.^2;                 % which creates an upper right triangle 2D array for each time step
+
+      end
+
+      longvel(1,beg:fin,:) = sflvel(ii,ii+1:end,:);
+      tranvel(1,beg:fin,:) = sftvel(ii,ii+1:end,:);
+      rd(1,beg:fin,:) = r(ii,ii+1:end,:);
+
+      beg = fin+1;
+      fin = fin + length(ii+2:nd);
+
+      prev=round((ii-1)/(nd-1),2);
+        if round(ii/(nd-1),2)~=prev
+            disp(['PROGRESS FOR COMPUTING SF VALUES: ', int2str(round(ii/(nd-1),2)*100), '%'])
+        end
+
+%         if mod(ii,100)==0
+%             save('packfile','-v7.3')
+%             clear all
+%             load('packfile')
+%         end
+
+    end
+
+
+    l = squeeze(longvel);     % Stores and compresses long vel data to give dimensions of velocity differences x time 
+    t = squeeze(tranvel);     % Stores and compresses tran vel data to give dimensions of velocity differences x time 
+
+    rd = squeeze(rd)/1000;          % This line gives dimensions of separation distances x time, and additionally puts the distances in terms of km instead of meters
+
+    ROMS_500m_unbinned.l = l;
+    ROMS_500m_unbinned.t = t;
+    ROMS_500m_unbinned.rd = rd;
+    ROMS_500m_unbinned.ocean_time = ocean_time;
+
+    save([outputdatapath,'ROMS_500m_395_raw_15400pts_add40_noshelf150m.mat'],'-struct','ROMS_500m_raw','-v7.3');
+
+
+    %Send text message to notify when complete
+
+    if sendmessage == true
+        [h,m,s] = hms(datetime);
+        if m<10
+            send_text_message(['ROMS_500m_395_raw_1400pts_add40_wshelf finished running at ',num2str(h),':0',num2str(m)])
+        else
+            send_text_message(['ROMS_500m_395_raw_1400pts_add40_noshelf150m finished running at ',num2str(h),':',num2str(m)])
+
+        end
+    end
+
+catch ME
+  send_text_message(ME.message)
+  error(ME.message)
+end
