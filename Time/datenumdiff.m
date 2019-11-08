@@ -6,7 +6,9 @@ function [d] = datenumdiff(d1,d2,unit)
 
 d = datetime(d2, 'ConvertFrom', 'datenum') - datetime(d1, 'ConvertFrom', 'datenum');
 
-if strcmp(unit, 'hour') == 1
+if strcmp(unit, 'day') == 1
+    d = days(d);
+elseif strcmp(unit, 'hour') == 1
     d = hours(d);
 elseif strcmp(unit, 'minute') == 1
     d = minutes(d);

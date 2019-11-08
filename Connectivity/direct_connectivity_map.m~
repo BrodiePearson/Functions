@@ -26,11 +26,11 @@ lonbins = minlon:binwid:maxlon;
 latbins = minlat:binwid:maxlat;
 
 %-------------------------------------------------------------------------
-%   Convert times to days since launch
+%   Convert times to times since launch
 %-------------------------------------------------------------------------
 tau = NaN(size(oceantime));
 for tt = 1:length(oceantime)
-    tau(tt) = datenumdiff(oceantime(1),oceantime(tt),'day');
+    tau(tt) = datenumdiff(oceantime(1),oceantime(tt),'minute');
 end
 %-------------------------------------------------------------------------
 %   Initialize matrices
@@ -131,7 +131,7 @@ total_time = cellfun(@mean,first_hit_time);
 struc.bincounts = bincounts;
 struc.bincounts_over_time = bincounts_over_time;
 struc.total_prob = total_prob;
-struc.total_time = total_time;
+struc.total_time = 
 struc.lonbins = lonbins;
 struc.latbins = latbins;
 struc.binwid = binwid;
