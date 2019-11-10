@@ -1,4 +1,4 @@
-function struc = lvel_t0_struc_func_calc(u,v,x,y,oceantime,par)
+function struc = lag_vel_t0_struc_func_calc(u,v,x,y,oceantime,par)
 %*************************************************************************
 %  Function calculate the Langrangian structure function. Output is a
 %  single layer structure.
