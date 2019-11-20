@@ -55,8 +55,14 @@ if  isfield(par,'order')
 else % default is second order
     du = du.^2;
     dv = dv.^2;
-    dul = dul.^2
+    dul = dul.^2;
     dut = dut.^2;
+end
+
+if isfield(par,'binwid') 
+    binwid = par.binwid;
+else
+    binwid = 0.1; % default
 end
 
 %-------------------------------------------------------------------------
@@ -65,12 +71,12 @@ end
 
 nmax = ceil(log10(max(tau(:))));
 nmin = floor(log10(min(tau(:))));
-bins = 10.^(nmin:.05:nmax);
+bins = 10.^(nmin:binwid:nmax);
 
 %-------------------------------------------------------------------------
 %   Bin Data
 %-------------------------------------------------------------------------
-disp('Binning data...')
+body('Binning data.')
 for ll = 1:nl
     for ii = 1:length(bins)
 
@@ -118,7 +124,7 @@ avutsf = nanmean(utsf,2);
 %-------------------------------------------------------------------------
 %   Bootstrapping
 %-------------------------------------------------------------------------
-disp('Boostrapping...')
+body('Boostrapping.')
 
 % default number of resamples is 10000
 if  ~isfield(par,'bootsampno')
@@ -155,7 +161,7 @@ else
         
         for bb =  1:length(bins)
             bnct = bincounts(bb,dd); 
-            if bnct > 30 && ~isnan(bnct) % This corresponds to have at least 8 drifters or locations
+            if bnct > 30 && ~isnan(bnct) % This corresponds to have at least 8 timesteps
                 [ciu,] = bootci(par.bootsampno,@nanmean,USF{bb,dd});    
                 UCI(bb,:) = ciu;                       
 
@@ -226,6 +232,8 @@ end
 %-------------------------------------------------------------------------
 %   Save Data to Structure
 %-------------------------------------------------------------------------
+body('Saving data to structure.')
+struc.par = par;
 struc.bincounts = bincounts;
 
 struc.avusf = avusf;

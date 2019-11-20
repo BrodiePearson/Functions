@@ -1,9 +1,9 @@
-function struc = lag_vel_struc_func_calc(u,v,x,y,oceantime,par)
+function struc = lag_vel_t0_struc_func_calc(u,v,lon,lat,oceantime,ui,vi,loni,lati,oceantimei, par)
 %*************************************************************************
 %  Function calculate the Langrangian structure function. Output is a
 %  single layer structure.
 %
-% nl = no. locations, nt = no. times, np = no. pairs
+% nt = no. locations, nt = no. times, np = no. pairs
 %*************************************************************************
 %   Required Input
 %-------------------------------------------------------------------------
@@ -13,10 +13,8 @@ function struc = lag_vel_struc_func_calc(u,v,x,y,oceantime,par)
 %-------------------------------------------------------------------------
 %   Optional Input
 %-------------------------------------------------------------------------
-%   par         : a structure containing the following variables
-%   
-%   anisotropy  : if set to 'True' saves dx,dy
-%   homogeneity : if set to 'True' saves latc, lonc
+%   par         : a structure containing any parameters to be saved to the
+%                   structure
 %-------------------------------------------------------------------------
 %   Default Output
 %-------------------------------------------------------------------------
@@ -43,55 +41,89 @@ end
 if size(oceantime,1)>size(oceantime,2)
     oceantime = oceantime';
 end
+
 % create new variables
 t = repmat(oceantime,size(u,1),1);
 t = datetime(t, 'ConvertFrom', 'datenum');
+% ti = repmat(oceantimei,size(u,2),1);
+ti = datetime(oceantimei, 'ConvertFrom', 'datenum');
+% ui = repmat(ui,size(u,2),1);
+% vi = repmat(vi,size(u,2),1);
+% loni = repmat(loni,size(u,2),1);
+% lati = repmat(lati,size(u,2),1);
 % switch dimensions
 u = u';
 v = v';
-x = x';
-y = y';
+lon = lon';
+lat = lat';
 t = t';
-nl = size(u,1);
+nt = size(u,1);
 %-------------------------------------------------------------------------
 % Set up variables
 %-------------------------------------------------------------------------
 
-ttmp  = cell(1,nl);   % sep time
-dutmp = cell(1,nl);   % zonal velocity increment
-dvtmp = cell(1,nl);   % meridional velocity increment
+ttmp  = cell(1,nt);   % sep time
+dutmp = cell(1,nt);   % zonal velocity increment
+dvtmp = cell(1,nt);   % meridional velocity increment
 
 %-------------------------------------------------------------------------
 % Compute distances and velocity differences
 %-------------------------------------------------------------------------
 
-disp('Calculating relative velocities...')
-parfor j = 1:nl-1
-    nn  = nl - j;
+body('Calculating relative velocities.')
+parfor j = 1%:nt-1
+    nn  = nt - j;
 
-    ttmp{j}  = days(repmat(t(j,:),nn,1) - t(j+1:nl,:));
+    ttmp{j}  = days(repmat(ti,nn,1) - t(j:nt,:));
     
-    dutmp{j} = repmat(u(j,:),nn,1) - u(j+1:nl,:);
+    dutmp{j} = repmat(ui,nn,1) - u(j:nt,:);
 
-    dvtmp{j} = repmat(v(j,:),nn,1) - v(j+1:nl,:);
+    dvtmp{j} = repmat(vi,nn,1) - v(j:nt,:);
     
-    rtmp{j}  = m_idist(repmat(x(j,:),nn,1),...
-    repmat(y(j,:),nn,1),x(j+1:nl,:),y(j+1:nl,:));
+    rtmp{j}  = m_idist(repmat(loni,nn,1),...
+    repmat(lati,nn,1),lon(j+1:nt,:),lat(j:nt,:));
     
-    dxtmp{j} = m_idist(repmat(x(j,:),nn,1),...
-        repmat(y(j,:),nn,1),x(j+1:nl,:),repmat(y(j,:),nn,1));
-    dxtmp{j}(repmat(x(j,:),nn,1) < x(j+1:nl,:)) = ...
-        -dxtmp{j}(repmat(x(j,:),nn,1) < x(j+1:nl,:));
+    dxtmp{j} = m_idist(repmat(loni,nn,1),...
+        repmat(lati,nn,1),lon(j:nt,:),repmat(lati,nn,1));
+    dxtmp{j}(repmat(loni,nn,1) < lon(j:nt,:)) = ...
+        -dxtmp{j}(repmat(loni,nn,1) < lon(j:nt,:));
     
-    dytmp{j} = m_idist(repmat(x(j,:),nn,1),...
-        repmat(y(j,:),nn,1),repmat(x(j,:),nn,1),y(j+1:nl,:));
-    dytmp{j}(repmat(y(j,:),nn,1) < y(j+1:nl,:)) = ...
-        -dytmp{j}(repmat(y(j,:),nn,1) < y(j+1:nl,:));
+    dytmp{j} = m_idist(repmat(loni,nn,1),...
+        repmat(lati,nn,1),repmat(loni,nn,1),lat(j:nt,:));
+    dytmp{j}(repmat(lati,nn,1) < lat(j:nt,:)) = ...
+        -dytmp{j}(repmat(lati,nn,1) < lat(j:nt,:));
 
-    prev=round((j-1)/(nl-1),2);
-    if round(j/(nl-1),2)~=prev
-        disp(['PROGRESS: ', int2str(round(j/(nl-1),2)*100), '%'])
+    prev=round((j-1)/(nt-1),2);
+    if round(j/(nt-1),2)~=prev
+        disp(['PROGRESS: ', int2str(round(j/(nt-1),2)*100), '%'])
     end
+    
+%     
+%     ttmp{j}  = days(ti(1,:) - t(j+1:nt,:));
+%     
+%     dutmp{j} = ui(1,:) - u(j+1:nt,:);
+% 
+%     dvtmp{j} = vi(1,:) - v(j+1:nt,:);
+%     
+%     rtmp{j}  = m_idist(loni(1,:),...
+%     repmat(lat(1,:),nn,1),lon(j+1:nt,:),lat(j+1:nt,:));
+%     
+%     dxtmp{j} = m_idist(repmat(lon(1,:),nn,1),...
+%         repmat(lat(1,:),nn,1),lon(j+1:nt,:),repmat(lat(1,:),nn,1));
+%     
+%     dxtmp{j}(repmat(lon(1,:),nn,1) < lon(j+1:nt,:)) = ...
+%         -dxtmp{j}(repmat(lon(1,:),nn,1) < lon(j+1:nt,:));
+%     
+%     dytmp{j} = m_idist(repmat(lon(1,:),nn,1),...
+%         repmat(lat(1,:),nn,1),repmat(lon(1,:),nn,1),lat(j+1:nt,:));
+%     
+%     dytmp{j}(repmat(lat(1,:),nn,1) < lat(j+1:nt,:)) = ...
+%         -dytmp{j}(repmat(lat(1,:),nn,1) < lat(j+1:nt,:));
+% 
+%     prev=round((j-1)/(nt-1),2);
+%     if round(j/(nt-1),2)~=prev
+%         disp(['PROGRESS: ', int2str(round(j/(nt-1),2)*100), '%'])
+%     end
 end
 
 tau  = abs(cell2mat(cat(2,ttmp(:))));
@@ -104,19 +136,36 @@ dy = cell2mat(cat(2,dytmp(:)));
 %-------------------------------------------------------------------------
 % Convert to longitudinal and transverse components
 %-------------------------------------------------------------------------
-disp('Converting to ul and ut...')
+body('Converting to ul and ut.')
 dul = ( du.*dx + dv.*dy) ./ r;
 dut = (-du.*dy + dv.*dx) ./ r;
 
 %-------------------------------------------------------------------------
+% Set the tau = zero times to NaNs
+%-------------------------------------------------------------------------
+zero_ind = tau == 0;
+tau(zero_ind) = NaN;
+du(zero_ind) = NaN;
+dv(zero_ind) = NaN;
+dx(zero_ind) = NaN;
+dy(zero_ind) = NaN;
+d
+%-------------------------------------------------------------------------
 % Save data to structure
 %-------------------------------------------------------------------------
-disp('Saving data to structure...')
+body('Saving data to structure.')
+struc.par = par;
 struc.du = du;
 struc.dv = dv;
 struc.dul = dul;
 struc.dut = dut;
 struc.tau = tau;
+struc.oceantime = oceantime;
+struc.oceantimei = oceantimei;
+struc.ui = ui;
+struc.vi = vi;
+struc.loni = loni;
+struc.lati = lati;
 struc.attributes = {['date modified: ' datestr(date)]};
 
 end
