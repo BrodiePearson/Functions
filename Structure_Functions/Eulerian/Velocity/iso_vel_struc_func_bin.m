@@ -1,4 +1,4 @@
-function struc = vel_struc_func_bin(ul,ut,r,oceantime,par)
+function struc = iso_vel_struc_func_bin(ul,ut,r,oceantime,par)
 %*************************************************************************
 %  struc = vel_struc_func_bin(ul,ut,r,oceantime,par)
 %*************************************************************************
@@ -123,7 +123,8 @@ clear ind
 ind = bincounts <30;
 tsf(ind) = NaN;
 lsf(ind) = NaN;
-r(ind) = NaN;
+R = r;
+R(ind) = NaN;
 bincounts(ind) = NaN;
 
 clear ind
@@ -131,14 +132,6 @@ clear ind
 % Take Ensemble Mean along the columns 
 avtsf = nanmean(tsf,2);
 avlsf = nanmean(lsf,2);
-
-% sumtsf = nansum(tsf.*bincounts,2);
-% tottsf = nansum(bincounts,2);
-% avtsf = sumtsf./tottsf;
-% 
-% sumlsf = nansum(lsf.*bincounts,2);
-% totlsf = nansum(bincounts,2);
-% avlsf = sumlsf./totlsf;
 
 %-------------------------------------------------------------------------
 %   Bootstrapping
@@ -236,7 +229,7 @@ struc.LSF = LSF;
 struc.TSF = TSF;
 
 struc.r = r;
-% struc.R = R;
+struc.R = R;
 
 struc.oceantime = oceantime;
 

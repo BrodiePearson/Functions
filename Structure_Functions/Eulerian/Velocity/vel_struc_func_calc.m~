@@ -88,8 +88,8 @@ parfor j = 1:nl-1
     
 
     if isfield(par,'inhomogeneity') && strcmp(par.inhomogeneity,'True') 
-        latctmp{j} = (repmat(lat(j,:),nn,1) + lat(j+1:nl,:))./2;
-        lonctmp{j} = (repmat(lon(j,:),nn,1) + lon(j+1:nl,:))./2;
+        latctmp = (repmat(lat(j,:),nn,1) + lat(j+1:nl,:))./2;
+        lonctmp = (repmat(lon(j,:),nn,1) + lon(j+1:nl,:))./2;
     end
 
     if mod(round(j/nl,2)*100,25)==0
@@ -112,19 +112,20 @@ end
 % Convert to longitudinal and transverse components
 %-------------------------------------------------------------------------
 disp('Converting to ul and ut...')
-dul = ( du.*dx + dv.*dy) ./ r;
-dut = (-du.*dy + dv.*dx) ./ r;
+ul = ( du.*dx + dv.*dy) ./ r;
+ut = (-du.*dy + dv.*dx) ./ r;
 
 %-------------------------------------------------------------------------
 % Save data to structure
 %-------------------------------------------------------------------------
 disp('Saving data to structure...')
-struc.dul = dul;
-struc.dut = dut;
+struc.ul = ul;
+struc.ut = ut;
 struc.r = r./1000;
 struc.oceantime =oceantime;
 struc.attributes = {['date modified: ' datestr(date)]};
 struc.par = par;
+
 
 if isfield(par,'inhomogeneity') && strcmp(par.inhomogeneity,'True') 
     struc.latc= latc;
