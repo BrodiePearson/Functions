@@ -92,7 +92,8 @@ parfor j = 1:nl-1
         lonctmp{j} = (repmat(lon(j,:),nn,1) + lon(j+1:nl,:))./2;
     end
 
-    if mod(round(j/nl,2)*100,25)==0
+    prev = mod(round((j-1)/nl,2)*100,25);
+    if mod(round(j/nl,2)*100,25)~=prev
         disp([int2str(round(j/nl,2)*100) '% Complete'])
     end
 end
