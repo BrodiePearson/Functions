@@ -88,8 +88,10 @@ parfor j = 1:nl-1
     
 
     if isfield(par,'inhomogeneity') && strcmp(par.inhomogeneity,'True') 
-        latctmp{j} = (repmat(lat(j,:),nn,1) + lat(j+1:nl,:))./2;
-        lonctmp{j} = (repmat(lon(j,:),nn,1) + lon(j+1:nl,:))./2;
+%         latctmp{j} = (repmat(lat(j,:),nn,1) + lat(j+1:nl,:))./2;
+%         lonctmp{j} = (repmat(lon(j,:),nn,1) + lon(j+1:nl,:))./2;
+        latctmp{j} = repmat(lat(j,:),nn,1);
+        lonctmp{j} = repmat(lon(j,:),nn,1);
     end
 
     prev = mod(round((j-1)/nl,2)*100,25);
