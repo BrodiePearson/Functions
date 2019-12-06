@@ -69,24 +69,50 @@ disp('Calculating relative velocities...')
 parfor j = 1:nt-1
     nn  = nt - j;
 
-    ttmp{j}  = days(repmat(t(j,:),nn,1) - t(j+1:nt,:));
     
-    dutmp{j} = repmat(u(j,:),nn,1) - u(j+1:nt,:);
+    ttmp{j}  = days(t(j+1:nt,:)-repmat(t(j,:),nn,1));
+    
+    dutmp{j} =  u(j+1:nt,:)-repmat(u(j,:),nn,1);
 
-    dvtmp{j} = repmat(v(j,:),nn,1) - v(j+1:nt,:);
+    dvtmp{j} =  v(j+1:nt,:)-repmat(v(j,:),nn,1);
     
     rtmp{j}  = m_idist(repmat(x(j,:),nn,1),...
     repmat(y(j,:),nn,1),x(j+1:nt,:),y(j+1:nt,:));
     
     dxtmp{j} = m_idist(repmat(x(j,:),nn,1),...
         repmat(y(j,:),nn,1),x(j+1:nt,:),repmat(y(j,:),nn,1));
-    dxtmp{j}(repmat(x(j,:),nn,1) < x(j+1:nt,:)) = ...
-        -dxtmp{j}(repmat(x(j,:),nn,1) < x(j+1:nt,:));
+    
+    % get correct sign
+    xind = x(j+1:nt,:) < repmat(x(j,:),nn,1)
+    dxtmp{j}(xind) = ...
+        -dxtmp{j}(xind);
     
     dytmp{j} = m_idist(repmat(x(j,:),nn,1),...
         repmat(y(j,:),nn,1),repmat(x(j,:),nn,1),y(j+1:nt,:));
-    dytmp{j}(repmat(y(j,:),nn,1) < y(j+1:nt,:)) = ...
-        -dytmp{j}(repmat(y(j,:),nn,1) < y(j+1:nt,:));
+    
+    % get correct sign
+    yind = y(j+1:nt,:) < repmat(y(j,:),nn,1)
+    dytmp{j}(yind) = ...
+        -dytmp{j}(yind);
+    
+%     ttmp{j}  = days(repmat(t(j,:),nn,1) - t(j+1:nt,:));
+%     
+%     dutmp{j} = repmat(u(j,:),nn,1) - u(j+1:nt,:);
+% 
+%     dvtmp{j} = repmat(v(j,:),nn,1) - v(j+1:nt,:);
+%     
+%     rtmp{j}  = m_idist(repmat(x(j,:),nn,1),...
+%     repmat(y(j,:),nn,1),x(j+1:nt,:),y(j+1:nt,:));
+%     
+%     dxtmp{j} = m_idist(repmat(x(j,:),nn,1),...
+%         repmat(y(j,:),nn,1),x(j+1:nt,:),repmat(y(j,:),nn,1));
+%     dxtmp{j}(repmat(x(j,:),nn,1) < x(j+1:nt,:)) = ...
+%         -dxtmp{j}(repmat(x(j,:),nn,1) < x(j+1:nt,:));
+%     
+%     dytmp{j} = m_idist(repmat(x(j,:),nn,1),...
+%         repmat(y(j,:),nn,1),repmat(x(j,:),nn,1),y(j+1:nt,:));
+%     dytmp{j}(repmat(y(j,:),nn,1) < y(j+1:nt,:)) = ...
+%         -dytmp{j}(repmat(y(j,:),nn,1) < y(j+1:nt,:));
 
     prev=round((j-1)/(nt-1),2);
     if round(j/(nt-1),2)~=prev
