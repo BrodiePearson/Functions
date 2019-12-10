@@ -1,19 +1,16 @@
-function struc = ESVF1_map(dul,dut,lon,lat,oceantime,par,latlonlimbox)
+function struc = ESVF1_map(dul,dut,lon,lat,oceantime,par,latlimbox)
 % get sizes
-[~,nt] = size(lon);
+[nd,nt] = size(lon);
+
+% creat tags for each drifter
+tag = 1:nd;
 
 if nargin < 7
-    % get lat lon bounds for bins
-    maxlat = nanmax(lat(:));
-    minlat = nanmin(lat(:));
-    maxlon = nanmax(lon(:));
-    minlon = nanmin(lon(:));
-else
-    % get user input lat lon bounds for bins
-    maxlat = latlonlimbox(1,2);
-    minlat = latlonlimbox(1,1);
-    maxlon = latlonlimbox(2,2);
-    minlon = latlonlimbox(2,1);
+% get lat lon bounds for boxes
+maxlat = max(lat(:));
+minlat = nanmin(lat(:));
+maxlon = max(lon(:));
+minlon = min(lon(:));
 end
 
 % Define the bin width
