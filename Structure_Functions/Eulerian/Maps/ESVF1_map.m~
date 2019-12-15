@@ -130,7 +130,7 @@ for tt = 1:nt
 end
 
 %-------------------------------------------------------------------------
-%   Statistics 
+%   Stat 
 %-------------------------------------------------------------------------
 ul_ave = cellfun(@nanmean,ul);
 ul_sd = cellfun(@nanstd,ul);
@@ -142,21 +142,7 @@ r_sd = cellfun(@nanstd,r);
 %-------------------------------------------------------------------------
 %   Boostrapping 
 %-------------------------------------------------------------------------
-% for tt = 1:nt
-%      for yy = 1:length(latbins)   
-%         for xx = 1:length(lonbins)
-%             
-%             if bnct > 30 && ~isnan(bnct) % This corresponds to have at least 8 drifters or locations
-%                 [cil,] = bootci(par.bootsampno,@nanmean,LSF{bb,tt});    
-%                 ulci(bb,:) = cil;                       
-% 
-%                 [cit,] = bootci(par.bootsampno,@nanmean,TSF{bb,tt});
-%                 utci(bb,:) = cit ; 
-%             end
-%             
-%         end
-%      end
-% end
+
 
 %-------------------------------------------------------------------------
 %   Save Data to Structure
@@ -186,22 +172,22 @@ if nargin < 8
     struc.binwid = binwid;
     struc.oceantime = oceantime;
     
-    outfn_new = [outfn(1:end-4)  '_combined.mat'];
+    outfn_new = [outfn(1:end-4)  '.mat'];
     save(outfn_new,'-struct','struc','-v7.3');
     clear struc
     
     struc.ul_ave = ul_ave;
-    struc.ul_sd = ul_sd;
+    struc.ul_sd = struc.ul_sd;
     struc.ut_ave = ut_ave;
-    struc.ut_sd = ut_sd;
+    struc.ut_sd = struc.ut_sd;
     struc.r_ave = r_ave;
-    struc.r_sd = r_sd;
+    struc.r_sd = struc.r_sd;
     struc.lonbins = lonbins;
     struc.latbins = latbins;
     struc.binwid = binwid;
     struc.oceantime = oceantime;
     
-    outfn_new = [outfn(1:end-4)  '_stats.mat'];
+    outfn_new = [outfn(1:end-4)  '_ave.mat'];
     save(outfn_new,'-struct','struc','-v7.3');
     clear struc 
 end
@@ -211,12 +197,10 @@ end
 struc.ul_over_time = ul_over_time;
 struc.ul = ul;
 struc.ul_ave = ul_ave;
-struc.ul_sd = ul_sd;
 
 struc.ut_over_time = ut_over_time;
 struc.ut = ut;
 struc.ut_ave = ut_ave;
-struc.ut_sd = ut_sd;
 
 struc.bincounts = bincounts;
 struc.bincounts_over_time = bincounts_over_time;
@@ -227,7 +211,6 @@ struc.latbins = latbins;
 struc.r_over_time = r_over_time;
 struc.r = r;
 struc.r_ave = r_ave;
-struc.r_sd = r_sd;
 
 struc.binwid = binwid;
 
