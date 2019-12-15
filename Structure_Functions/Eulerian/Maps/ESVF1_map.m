@@ -1,8 +1,8 @@
-function struc = ESVF1_map(dul,dut,lon,lat,oceantime,par,latlonlimbox)
+function struc = ESVF1_map(dul,dut,lon,lat,rdist,oceantime,par,latlonlimbox)
 % get sizes
 [~,nt] = size(lon);
 
-if nargin < 7
+if nargin < 8
     % get lat lon bounds for bins
     maxlat = nanmax(lat(:));
     minlat = nanmin(lat(:));
@@ -33,10 +33,14 @@ latbins = minlat:binwid:maxlat;
 %-------------------------------------------------------------------------
 %   Initialize matrices
 %-------------------------------------------------------------------------
-ul_total= cell([length(latbins),length(lonbins)]);
-ut_total = cell([length(latbins),length(lonbins)]);
+ul = cell([length(latbins),length(lonbins)]);
+ul_over_time = cell([length(latbins),length(lonbins),length(oceantime)]);
+ut = cell([length(latbins),length(lonbins)]);
+ut_over_time = cell([length(latbins),length(lonbins),length(oceantime)]);
 bincounts = zeros([length(latbins),length(lonbins)]);
 bincounts_over_time = zeros([length(latbins),length(lonbins),length(oceantime)]);
+r_over_time = cell([length(latbins),length(lonbins),length(oceantime)]);
+r = cell([length(latbins),length(lonbins)]);
 %-------------------------------------------------------------------------
 %   Bin Data
 %-------------------------------------------------------------------------
@@ -47,6 +51,7 @@ for tt = 1:nt
             lattmp = lat(:,tt); 
             ultmp = dul(:,tt);
             uttmp = dut(:,tt);
+            rtmp = rdist(:,tt);
             
             if xx == 1 && yy == 1
                 ind = find(abs(lontmp - lonbins(xx)) <= abs(lontmp - lonbins(xx+1)) & abs(lattmp - latbins(yy)) <= abs(lattmp - latbins(yy+1)));
@@ -94,16 +99,24 @@ for tt = 1:nt
             
             if ~isempty(ind)
                 % find difference between current tags and previous tags
-                if isempty(ul_total{yy,xx})
-                    ul_total{yy,xx} = ultmp(ind);
-                    ut_total{yy,xx} = uttmp(ind);
+                if isempty(ul_over_time{yy,xx})
+                    ul{yy,xx} = ultmp(ind);
+                    ul_over_time{yy,xx,tt} = ultmp(ind);
+                    ut{yy,xx} = uttmp(ind);
+                    ut_over_time{yy,xx,tt} = uttmp(ind);
+                    r{yy,xx} = rtmp(ind);
+                    r_over_time{yy,xx,tt} = rtmp(ind);
                     bincounts(yy,xx) = length(ind);
                     bincounts_over_time(yy,xx,tt) = length(ind);
                 else
-                    ul_total{yy,xx}= [ul_total{yy,xx}; ultmp(ind)];
-                    ut_total{yy,xx} = [ut_total{yy,xx}; uttmp(ind)];
-                    bincounts(yy,xx) = length(ul_total{yy,xx});
-                    bincounts_over_time(yy,xx,tt) = length(ul_total{yy,xx});
+                    ul{yy,xx}= [ul{yy,xx}; ultmp(ind)];
+                    ul_over_time{yy,xx,tt} = [ul_over_time{yy,xx,tt}; ultmp(ind)];
+                    ut{yy,xx} = [ut{yy,xx}; uttmp(ind)];
+                    ut_over_time{yy,xx,tt} = [ut_over_time{yy,xx,tt}; uttmp(ind)];
+                    r{yy,xx} = [r{xx,yy}; rtmp(ind)];
+                    r_over_time{yy,xx,tt} = [r_over_time{yy,xx,tt}; rtmp(ind)];
+                    bincounts(yy,xx) = length(ul{yy,xx});
+                    bincounts_over_time(yy,xx,tt) = length(ul_over_time{yy,xx,tt});
                 end
 
             end
@@ -116,19 +129,38 @@ for tt = 1:nt
     end
 end
 
-avul = cellfun(@nanmean,ul_total);
-avut = cellfun(@nanmean,ut_total);
+ul_ave = cellfun(@nanmean,ul);
+ut_ave = cellfun(@nanmean,ut);
+r_ave = cellfun(@nanmean,r);
+
+
+%-------------------------------------------------------------------------
+%   Boostrapping
+%-------------------------------------------------------------------------
+
+
 %-------------------------------------------------------------------------
 %   Save Data to Structure
 %-------------------------------------------------------------------------
-struc.ul_total = ul_total;
-struc.ut_total = ut_total;
-struc.avul = avul;
-struc.avut = avut;
+struc.ul_over_time = ul_over_time;
+struc.ul = ul;
+struc.ul_ave = ul_ave;
+
+struc.ut_over_time = ut_over_time;
+struc.ut = ut;
+struc.ut_ave = ut_ave;
+
 struc.bincounts = bincounts;
 struc.bincounts_over_time = bincounts_over_time;
+
 struc.lonbins = lonbins;
 struc.latbins = latbins;
+
+struc.r_over_time = r_over_time;
+struc.r = r;
+struc.r_ave = r_ave;
+
 struc.binwid = binwid;
+
 struc.oceantime = oceantime;
 end
