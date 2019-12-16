@@ -1,8 +1,8 @@
-function struc = ESVF1_map(dul,dut,lon,lat,rdist,oceantime,par,latlonlimbox,outfn)
+function struc = ESVF1_map(dul,dut,lon,lat,rdist,oceantime,par,outfn)
 % get sizes
 [~,nt] = size(lon);
 
-if nargin < 8
+if  ~isfield(par,'latlonlimbox') 
     % get lat lon bounds for bins
     maxlat = nanmax(lat(:));
     minlat = nanmin(lat(:));
@@ -10,10 +10,10 @@ if nargin < 8
     minlon = nanmin(lon(:));
 else
     % get user input lat lon bounds for bins
-    maxlat = latlonlimbox(1,2);
-    minlat = latlonlimbox(1,1);
-    maxlon = latlonlimbox(2,2);
-    minlon = latlonlimbox(2,1);
+    maxlat = par.latlonlimbox(1,2);
+    minlat = par.latlonlimbox(1,1);
+    maxlon = par.latlonlimbox(2,2);
+    minlon = par.latlonlimbox(2,1);
 end
 
 % Define the bin width
@@ -163,7 +163,7 @@ r_sd = cellfun(@nanstd,r);
 %-------------------------------------------------------------------------
 
 % save structures to individual files if outfn is provided including path
-if nargin < 8
+if nargin > 7
     struc.ul_over_time = ul_over_time;
     struc.ut_over_time = ut_over_time;
     struc.bincounts_over_time = bincounts_over_time;
