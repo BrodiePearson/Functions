@@ -98,7 +98,6 @@ for tt = 1:nt
 
             
             if ~isempty(ind)
-                % find difference between current tags and previous tags
                 if isempty(ul_over_time{yy,xx})
                     ul{yy,xx} = ultmp(ind);
                     ul_over_time{yy,xx,tt} = ultmp(ind);
