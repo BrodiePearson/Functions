@@ -98,7 +98,7 @@ for tt = 1:nt
 
             
             if ~isempty(ind)
-                if isempty(ul_over_time{yy,xx})
+                if isempty(ul{yy,xx})
                     ul{yy,xx} = ultmp(ind);
                     ul_over_time{yy,xx,tt} = ultmp(ind);
                     ut{yy,xx} = uttmp(ind);
@@ -112,7 +112,7 @@ for tt = 1:nt
                     ul_over_time{yy,xx,tt} = [ul_over_time{yy,xx,tt}; ultmp(ind)];
                     ut{yy,xx} = [ut{yy,xx}; uttmp(ind)];
                     ut_over_time{yy,xx,tt} = [ut_over_time{yy,xx,tt}; uttmp(ind)];
-                    r{yy,xx} = [r{xx,yy}; rtmp(ind)];
+                    r{yy,xx} = [r{yy,xx}; rtmp(ind)];
                     r_over_time{yy,xx,tt} = [r_over_time{yy,xx,tt}; rtmp(ind)];
                     bincounts(yy,xx) = length(ul{yy,xx});
                     bincounts_over_time(yy,xx,tt) = length(ul_over_time{yy,xx,tt});
