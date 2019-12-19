@@ -158,8 +158,8 @@ total = length(latbins)*length(lonbins);
             rci(yy,xx,:) = cir ; 
             
             prev=round((count-1)/total,2);
-            if round(tt/nt,2)~=prev
-                body(['PROGRESS Bootstrapping: ', int2str(round((count)/total,2)*100) '%%'])
+            if round((count)/total,2)~=prev
+                body(['PROGRESS: ', int2str(round((count)/total,2)*100) '%%'])
             end
             count = count+1;
         end
