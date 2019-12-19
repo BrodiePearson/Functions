@@ -141,8 +141,7 @@ r_sd = cellfun(@nanstd,r);
 %-------------------------------------------------------------------------
 %   Boostrapping 
 %-------------------------------------------------------------------------
-count = 0;
-total = length(latbins)*length(lonbins);
+count = 0
  for yy = 1:length(latbins)   
     for xx = 1:length(lonbins)
         tmp = ul{yy,xx};
@@ -157,9 +156,9 @@ total = length(latbins)*length(lonbins);
             [cir,] = bootci(par.bootsampno,@nanmean,r{yy,xx});
             rci(yy,xx,:) = cir ; 
             
-            prev=round((count-1)/total,2);
+            prev=round((tt-1)/nt,2);
             if round(tt/nt,2)~=prev
-                body(['PROGRESS Bootstrapping: ', int2str(round((count)/total,2)*100) '%%'])
+                body(['PROGRESS: ', int2str(round(tt/nt,2)*100) '%%'])
             end
             count = count+1;
         end
