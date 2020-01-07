@@ -148,13 +148,13 @@ total = length(latbins)*length(lonbins);
         tmp = ul{yy,xx};
         % make sure there are enough drifters to get a good ci and they aren't all nans
         if length(tmp) > 8 && length(tmp(~isnan(tmp))) > 8
-            [cil,] = bootci(par.bootsampno,@nanmean,ul{yy,xx});    
+            [cil,] = bootci(par.bootsampno,@nanmean,ul{yy,xx},'UseParallel','True');    
             ulci(yy,xx,:) = cil;                       
 
-            [cit,] = bootci(par.bootsampno,@nanmean,ut{yy,xx});
+            [cit,] = bootci(par.bootsampno,@nanmean,ut{yy,xx},'UseParallel','True');
             utci(yy,xx,:) = cit ; 
 
-            [cir,] = bootci(par.bootsampno,@nanmean,r{yy,xx});
+            [cir,] = bootci(par.bootsampno,@nanmean,r{yy,xx},'UseParallel','True');
             rci(yy,xx,:) = cir ; 
             
             prev=round((count-1)/total,2);
