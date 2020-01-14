@@ -6,12 +6,12 @@ function frame2gif(filename,cf,fn,par)
 % par = structure with the following defined fields
         % par.delay = seconds between frames
 
-% set default seconds of delay between frames (1-655)
+% set default delaytime between frames
 if ~isfield(par,'delaytime')
     par.delay = 0.01;
 end
 
-% set default quality of image (1-100)
+% set default quality of image from 1-100
 if ~isfield(par,'quality')
     par.quality = 100;
 end
@@ -24,10 +24,9 @@ im = frame2im(frame);
 % Write to the GIF File 
       if fn == 1
           imwrite(imind,cm,filename,'gif',  'DelayTime', par.delay,...
-               'Quality',par.quality, 'Loopcount',inf); 
+               'Quality',100, 'Loopcount',inf); 
       else 
-          imwrite(imind,cm,filename,'gif', 'DelayTime', par.delay,...
-              'Quality',par.quality, 'WriteMode','append'); 
+          imwrite(imind,cm,filename,'gif', 'DelayTime', par.delay, 'WriteMode','append'); 
       end 
 
 end
