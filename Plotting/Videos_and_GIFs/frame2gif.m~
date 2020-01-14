@@ -1,4 +1,4 @@
-function frame2gif(filename,cf,fn,par)
+function frame2gif(filename,cf,fn,varargin)
 % Written by Jenna Pearson 2019
 % filename = to include path if desired
 % cf = gcf
@@ -6,13 +6,18 @@ function frame2gif(filename,cf,fn,par)
 % par = structure with the following defined fields
         % par.delay = seconds between frames
 
-% set default delaytime between frames
-if ~isfield(par,'delaytime')
+% check to make sure par is defined
+if nargin < 4
+    par.empty = 'True';
+end
+
+% set default seconds of delay between frames (1-655)
+if ~isfield('par','delaytime')
     par.delay = 0.01;
 end
 
-% set default quality of image from 1-100
-if ~isfield(par,'quality')
+% set default quality of image (1-100)
+if ~isfield('par','quality')
     par.quality = 100;
 end
 
@@ -24,9 +29,10 @@ im = frame2im(frame);
 % Write to the GIF File 
       if fn == 1
           imwrite(imind,cm,filename,'gif',  'DelayTime', par.delay,...
-               'Quality',100, 'Loopcount',inf); 
+               'Quality',par.quality, 'Loopcount',inf); 
       else 
-          imwrite(imind,cm,filename,'gif', 'DelayTime', par.delay, 'WriteMode','append'); 
+          imwrite(imind,cm,filename,'gif', 'DelayTime', par.delay,...
+              'Quality',par.quality, 'WriteMode','append'); 
       end 
 
 end
