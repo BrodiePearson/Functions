@@ -152,10 +152,10 @@ if nt >1
         bnct = bincounts(kk,:); 
 
         if nansum(bnct) > 30 % This corresponds to have at least 8 drifters or locations
-            [cil,] = bootci(par.bootsampno,@nanmean,lsf(kk,:));    
+            [cil,] = bootci(par.bootsampno,@nanmean,lsf(kk,:),'UseParallel' ,true);    
             lci(kk,:) = cil;                       
 
-            [cit,] = bootci(par.bootsampno,@nanmean,tsf(kk,:));
+            [cit,] = bootci(par.bootsampno,@nanmean,tsf(kk,:),'UseParallel' ,true);
             tci(kk,:) = cit ; 
         end
      end
@@ -165,10 +165,10 @@ else
         for bb =  1:length(bins)
             bnct = bincounts(bb,tt); 
             if bnct > 30 && ~isnan(bnct) % This corresponds to have at least 8 drifters or locations
-                [cil,] = bootci(par.bootsampno,@nanmean,LSF{bb,tt});    
+                [cil,] = bootci(par.bootsampno,@nanmean,LSF{bb,tt},'UseParallel' ,true);    
                 LCI(bb,:) = cil;                       
 
-                [cit,] = bootci(par.bootsampno,@nanmean,TSF{bb,tt});
+                [cit,] = bootci(par.bootsampno,@nanmean,TSF{bb,tt},'UseParallel' ,true);
                 TCI(bb,:) = cit ; 
             else
                 LCI(bb,:) = NaN([1,2]);

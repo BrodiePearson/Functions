@@ -127,10 +127,10 @@ if ntraj >1
         bnct = bincounts(kk,:); 
 
         if nansum(bnct) > 30 % This corresponds to at least 8 time differences
-            [ciu,] = bootci(par.bootsampno,@nanmean,usf(kk,:));    
+            [ciu,] = bootci(par.bootsampno,@nanmean,usf(kk,:),'UseParallel' ,true);    
             uci(kk,:) = ciu;                       
 
-            [civ,] = bootci(par.bootsampno,@nanmean,vsf(kk,:));
+            [civ,] = bootci(par.bootsampno,@nanmean,vsf(kk,:),'UseParallel' ,true);
             vci(kk,:) = civ ; 
         end
      end
@@ -140,10 +140,10 @@ else
         for bb =  1:length(bins)
             bnct = bincounts(bb,dd); 
             if bnct > 30 && ~isnan(bnct) % This corresponds to have at least 8 drifters or locations
-                [ciu,] = bootci(par.bootsampno,@nanmean,USF{bb,dd});    
+                [ciu,] = bootci(par.bootsampno,@nanmean,USF{bb,dd},'UseParallel' ,true);    
                 UCI(bb,:) = ciu;                       
 
-                [civ,] = bootci(par.bootsampno,@nanmean,VSF{bb,dd});
+                [civ,] = bootci(par.bootsampno,@nanmean,VSF{bb,dd},'UseParallel' ,true);
                 VCI(bb,:) = civ ; 
             else
                 UCI(bb,:) = NaN([1,2]);
