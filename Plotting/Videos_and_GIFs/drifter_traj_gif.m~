@@ -33,10 +33,10 @@ function drifter_traj_gif(filename,lat,lon,oceantime,varargin)
     % defaults
     
     % color of drifter
-    default_color = 'k'; 
+    defaultColor = 'k'; 
     
     % tail color
-    default_tail_color = 'k';
+    tail_color = 'k';
     
     % find minutes between times.
     d = (oceantime(2)-oceantime(1))*24*60;
@@ -61,12 +61,12 @@ function drifter_traj_gif(filename,lat,lon,oceantime,varargin)
     errmsg = ['Color must be a predfined matlab character color, e.g. "k" or',...
     a 'vector of length 3.'];
     valid_func = @(x) assert(ischar(x) || isnumeric(x) && length(x) == 3,errorMsg);
-    addParameter(p,'color',default_color,valid_func);
+    addParameter(p,'color',defaultColor,valid_func);
     
     errmsg = ['Color must be a predfined matlab character color, e.g. "k" or',...
     a 'vector of length 3.'];
     valid_func = @(x) assert(ischar(x) || isnumeric(x) && length(x) == 3,errorMsg);
-    addParameter(p,'tail_color',default_tail_color,valid_func);
+    addParameter(p,'color',defaultColor,valid_func);
     
     parse(p,varargin{:});
     
