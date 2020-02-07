@@ -141,30 +141,30 @@ r_sd = cellfun(@nanstd,r);
 %-------------------------------------------------------------------------
 %   Boostrapping 
 %-------------------------------------------------------------------------
-count = 0;
-total = length(latbins)*length(lonbins);
- for yy = 1:length(latbins)   
-    for xx = 1:length(lonbins)
-        tmp = ul{yy,xx};
-        % make sure there are enough drifters to get a good ci and they aren't all nans
-        if length(tmp) > 8 && length(tmp(~isnan(tmp))) > 8
-            [cil,] = bootci(par.bootsampno,@nanmean,ul{yy,xx},'UseParallel','True');    
-            ulci(yy,xx,:) = cil;                       
-
-            [cit,] = bootci(par.bootsampno,@nanmean,ut{yy,xx},'UseParallel','True');
-            utci(yy,xx,:) = cit ; 
-
-            [cir,] = bootci(par.bootsampno,@nanmean,r{yy,xx},'UseParallel','True');
-            rci(yy,xx,:) = cir ; 
-            
-            prev=round((count-1)/total,2);
-            if round((count)/total,2)~=prev
-                body(['PROGRESS: ', int2str(round((count)/total,2)*100) '%%'])
-            end
-            count = count+1;
-        end
-    end
- end
+% count = 0;
+% total = length(latbins)*length(lonbins);
+%  for yy = 1:length(latbins)   
+%     for xx = 1:length(lonbins)
+%         tmp = ul{yy,xx};
+%         % make sure there are enough drifters to get a good ci and they aren't all nans
+%         if length(tmp) > 8 && length(tmp(~isnan(tmp))) > 8
+%             [cil,] = bootci(par.bootsampno,@nanmean,ul{yy,xx},'UseParallel','True');    
+%             ulci(yy,xx,:) = cil;                       
+% 
+%             [cit,] = bootci(par.bootsampno,@nanmean,ut{yy,xx},'UseParallel','True');
+%             utci(yy,xx,:) = cit ; 
+% 
+%             [cir,] = bootci(par.bootsampno,@nanmean,r{yy,xx},'UseParallel','True');
+%             rci(yy,xx,:) = cir ; 
+%             
+%             prev=round((count-1)/total,2);
+%             if round((count)/total,2)~=prev
+%                 body(['PROGRESS: ', int2str(round((count)/total,2)*100) '%%'])
+%             end
+%             count = count+1;
+%         end
+%     end
+%  end
 
 
 %-------------------------------------------------------------------------
@@ -201,13 +201,13 @@ if nargin > 7
     
     struc.ul_ave = ul_ave;
     struc.ul_sd = ul_sd;
-    struc.ulci = ulci;
+%    struc.ulci = ulci;
     struc.ut_ave = ut_ave;
     struc.ut_sd = ut_sd;
-    struc.utci = utci;
+%    struc.utci = utci;
     struc.r_ave = r_ave;
     struc.r_sd = r_sd;
-    struc.rci = rci;
+%    struc.rci = rci;
     struc.lonbins = lonbins;
     struc.latbins = latbins;
     struc.binwid = binwid;
@@ -224,13 +224,13 @@ struc.ul_over_time = ul_over_time;
 struc.ul = ul;
 struc.ul_ave = ul_ave;
 struc.ul_sd = ul_sd;
-struc.ulci = ulci;
+%struc.ulci = ulci;
 
 struc.ut_over_time = ut_over_time;
 struc.ut = ut;
 struc.ut_ave = ut_ave;
 struc.ut_sd = ut_sd;
-struc.utci = utci;
+%struc.utci = utci;
 
 struc.bincounts = bincounts;
 struc.bincounts_over_time = bincounts_over_time;
@@ -242,7 +242,7 @@ struc.r_over_time = r_over_time;
 struc.r = r;
 struc.r_ave = r_ave;
 struc.r_sd = r_sd;
-struc.rci = rci;
+%struc.rci = rci;
 
 struc.binwid = binwid;
 
