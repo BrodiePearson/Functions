@@ -1,0 +1,97 @@
+<html><head><meta http-equiv="Content-Style-Type" content="text/html; charset=UTF-8" />
+<style type="text/css" media="all"> @import "m2html.css";</style>
+<title>jLab Help Files</title></head><body>
+<div><h1>SPHERESORT is the <a href="jMap.html">jMap</a> module of <a href="jLab.html">jLab</a>.</h1></div><div class="fragment"><pre class="comment">
+ <a href="spheresort.html">SPHERESORT</a>  Sorted great circle distances to nearby points on the earth.
+ 
+    Computing great circle distances on the earth between two sets of
+    points --- data points and a fixed grid, say --- is computationally 
+    expensize.  <a href="spheresort.html">SPHERESORT</a> speeds this up substantially. 
+ 
+    [DS,XS,YS]=<a href="spheresort.html">SPHERESORT</a>(LAT,LON,LATO,LONO,CUTOFF) returns the great
+    circle distances DS between data points at locations LAT, LON and 
+    nearby grid points located at LATO, LONO, sorting in order of distance. 
+ 
+    XS and YS are the corresponding coordinates of the sorted data points 
+    in a local tangent plane about each grid point. 
+  
+    LAT and LON are arrays of the same size into data point locations.
+    Any NaN values in LAT/LON are ignored.  
+ 
+    LATO and LONO are arrays of length M and N, say, specifying the
+    latitudes and longitudes of an M x N matrix of grid points, i.e.
+ 
+        LATO =  [LATO_1;    LONO= [LONO_1 LONO_2 ... LONO_N]. 
+                 LATO_2; 
+                   ...
+                 LATO_M]
+ 
+    <a href="spheresort.html">SPHERESORT</a> only computes distances for nearby points, up to a distance 
+    of CUTOFF, which is given in kilometers.  CUTOFF should be less than 
+    1/4 of the circumference of the earth, <a href="radearth.html">RADEARTH</a> * PI/2, so that sorted
+    (LAT,LON) points will lie in the same hemisphere as the grid points.
+ 
+    The output arrays are then all M x N x J arrays where J is the maximum
+    number of points in the CUTOFF neighborhood at any grid point.  Entries 
+    in the ouput corresponding to farther distances are filled with NaNs.
+ 
+    DS gives the distances of data points less than CUTOFF kilometers 
+    from the (m,n)th grid point, sorted in order of increasing distance.  
+ 
+    XS and YS give the coordinates, in kilometers, of the corresponding 
+    data points in a plane tangent to the (m,n)th grid point.  See 
+    <a href="latlon2xy.html">LATLON2XY</a> and Lilly and Lagerloef (2018) for details.
+    _________________________________________________________________
+  
+    Limiting output dimension
+ 
+    <a href="spheresort.html">SPHERESORT</a>(LAT,LON,LATO,LONO,[CUTOFF JMAX]), where the fifth input 
+    argument is a 2-vector, additionally specifies that the third dimension
+    of the output arrays will be no more than JMAX. 
+ 
+    This option is useful for the 'fixed population' algorithm in
+    <a href="polysmooth.html">POLYSMOOTH</a>, as it ensures the output fields will be no larger than is
+    necessary.  It can also be used simply to limit the output size. 
+    _________________________________________________________________
+  
+    Additional input parameters
+ 
+    Let's say some additional variables Z1, Z2,...,ZK are given at
+    the data locations LAT, LON.  Then 
+    
+        [DS,XS,YS,Z1S,Z2S,...,ZKS]=
+            <a href="spheresort.html">SPHERESORT</a>(LAT,LON,Z1,Z2,...,ZK,LATO,LONO,CUTOFF);
+ 
+    also returns the sorted values of these variables.
+ 
+    Z1D, Z2D,...,ZKD are the same size as the other output arguments, and 
+    give the values of Z1, Z2,...,ZK sorted according to distance.
+ 
+    When there are multiple fields to be mapped, one may instead wish to 
+    use the approach described under "One grid, many fields" in <a href="polysmooth.html">POLYSMOOTH</a>.   
+    _________________________________________________________________
+   
+    Parellel algorithm
+ 
+    <a href="spheresort.html">SPHERESORT</a>(...'parallel') parallelizes the computation using a parfor
+    loop implemented over latitudes.  This requires Matlab's Parallel 
+    Computing Toolbox to be installed. 
+ 
+    Also, depending on the size of dataset, the parallel algorith may lead
+    to memory problems, so it should be used judiciously.  For large
+    datasets, try combining an external loop over longitude with the
+    parallel algorithm over latitude.
+    _________________________________________________________________
+ 
+    See also <a href="twodsort.html">TWODSORT</a>, <a href="polysmooth.html">POLYSMOOTH</a>.
+ 
+    '<a href="spheresort.html">spheresort</a> --t' runs a test.
+ 
+    Usage: ds=<a href="spheresort.html">spheresort</a>(lat,lon,lato,lono,cutoff);
+           ds=<a href="spheresort.html">spheresort</a>(lat,lon,lato,lono,cutoff,'parallel',Nworkers);
+           [ds,xs,ys]=<a href="spheresort.html">spheresort</a>(lat,lon,lato,lono,cutoff);
+           [ds,xs,ys,z1s,z2s]=<a href="spheresort.html">spheresort</a>(lat,lon,z1,z2,lato,lono,cutoff);
+    __________________________________________________________________
+    This is part of <a href="jLab.html">JLAB</a> --- type 'help jlab' for more information
+    (C) 2008--2018 J.M. Lilly --- type 'help <a href="jlab_license.html">jlab_license</a>' for details
+</pre></div><h2><a href="jLab.html">contents</a>  |  <a href="jlab_allhelp.html">allhelp</a>  |  <a href="jlab_index.html">index</a></h2></body></html>
